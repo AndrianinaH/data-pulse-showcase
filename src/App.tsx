@@ -12,6 +12,7 @@ import Audience from "./pages/Audience";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { Login } from "./pages/Login";
+import PrivateRoute from "./components/PrivateRoute";
 
 const queryClient = new QueryClient();
 
@@ -34,12 +35,47 @@ const App = () => {
               )}
               <main className="flex-1">
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  <Route
+                    path="/"
+                    element={
+                      <PrivateRoute>
+                        <Index />
+                      </PrivateRoute>
+                    }
+                  />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/posts" element={<Posts />} />
-                  <Route path="/audience" element={<Audience />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route
+                    path="/analytics"
+                    element={
+                      <PrivateRoute>
+                        <Analytics />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/posts"
+                    element={
+                      <PrivateRoute>
+                        <Posts />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/audience"
+                    element={
+                      <PrivateRoute>
+                        <Audience />
+                      </PrivateRoute>
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <PrivateRoute>
+                        <Settings />
+                      </PrivateRoute>
+                    }
+                  />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

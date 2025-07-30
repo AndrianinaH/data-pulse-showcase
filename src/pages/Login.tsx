@@ -9,8 +9,30 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const res = { ok: true };
+    const data = {
+      name: "john Doe",
+      email: "jean@gmail.com",
+      token: "wawawawa",
+    };
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      navigate("/");
+    } else {
+      alert("Identifiants incorrects");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center h-screen">
       <Card className="w-full max-w-sm">
@@ -36,7 +58,9 @@ export const Login = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Connexion</Button>
+          <Button className="w-full" onClick={handleLogin}>
+            Connexion
+          </Button>
         </CardFooter>
       </Card>
     </div>
