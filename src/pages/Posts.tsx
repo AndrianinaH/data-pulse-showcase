@@ -1,25 +1,39 @@
 import { PostCard } from "@/components/PostCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Plus } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/postService";
 import type { Post as CardPost } from "@/components/PostCard";
 import type { Post } from "@/services/postService";
+import { debounce } from "@/lib/utils";
 
 export default function Posts() {
   const [page, setPage] = useState(1);
   const pageSize = 20;
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce effect
+  const debounceSearch = debounce((val: string) => {
+    setDebouncedSearch(val);
+  }, 400);
+
+  // Update debounced value on search change
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearch(e.target.value);
+    debounceSearch(e.target.value);
+  }
 
   const {
     data: posts,
     isLoading,
     error,
   } = useQuery<Post[]>({
-    queryKey: ["posts", page],
-    queryFn: () => getPosts(page, pageSize),
+    queryKey: ["posts", page, debouncedSearch],
+    queryFn: () =>
+      getPosts(page, pageSize, "postCreatedAt:desc", debouncedSearch),
   });
 
   const mapApiPostToCardPost = (apiPost): CardPost => ({
@@ -65,16 +79,9 @@ export default function Posts() {
           <Input
             placeholder="Rechercher dans les publications..."
             className="pl-10"
+            value={search}
+            onChange={handleSearchChange}
           />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtres
-          </Button>
-          <Badge variant="secondary">Toutes</Badge>
-          <Badge variant="outline">Photos</Badge>
-          <Badge variant="outline">Vidéos</Badge>
         </div>
       </div>
 

@@ -32,12 +32,16 @@ export const getPosts = async (
   page = 1,
   pageSize = 20,
   orderBy = "postCreatedAt:desc",
+  search?: string,
 ): Promise<Post[]> => {
   const params = new URLSearchParams({
     page: page.toString(),
     pageSize: pageSize.toString(),
     orderBy,
   });
+  if (search) {
+    params.append("search", search);
+  }
   const response = await fetch(`${API_BASE_URL}/posts?${params}`);
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
