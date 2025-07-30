@@ -1,8 +1,29 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast } from "@/hooks/use-toast";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+export function handle401(response: Response) {
+  if (response.status === 401) {
+    toast({
+      title: "Session expirée",
+      description: "Veuillez vous reconnecter.",
+      variant: "destructive",
+    });
+    window.location.href = "/login";
+    localStorage.removeItem("token");
+    window.location.reload();
+    return true;
+  }
+  return false;
 }
 
 export const formatNumber = (numStr: string | number) => {

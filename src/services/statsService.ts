@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { API_BASE_URL } from "@/lib/api";
-import { getAuthHeaders } from "@/lib/api";
+import { getAuthHeaders, handle401 } from "@/lib/utils";
 
 const statsSchema = z.object({
-  totalReactions: z.string(),
-  totalComments: z.string(),
-  totalShares: z.string(),
-  totalVideoViews: z.string(),
-  totalPosts: z.string(),
+  totalReactions: z.string().nullable().default("0"),
+  totalComments: z.string().nullable().default("0"),
+  totalShares: z.string().nullable().default("0"),
+  totalVideoViews: z.string().nullable().default("0"),
+  totalPosts: z.string().nullable().default("0"),
 });
 
 export type Stats = z.infer<typeof statsSchema>;
@@ -18,6 +18,7 @@ export const getStats = async (): Promise<Stats> => {
       ...getAuthHeaders(),
     },
   });
+  if (handle401(response)) throw new Error("Unauthorized");
   if (!response.ok) {
     throw new Error("Failed to fetch stats");
   }
@@ -33,6 +34,7 @@ export const getSearchStats = async (search: string): Promise<Stats> => {
       ...getAuthHeaders(),
     },
   });
+  if (handle401(response)) throw new Error("Unauthorized");
   if (!response.ok) {
     throw new Error("Failed to fetch search stats");
   }

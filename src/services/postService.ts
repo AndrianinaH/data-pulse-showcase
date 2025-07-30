@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "@/lib/api";
-import { getAuthHeaders } from "@/lib/api";
+import { getAuthHeaders, handle401 } from "@/lib/utils";
 
 export type Post = {
   createdAt: string;
@@ -27,6 +27,7 @@ export const getLatestPosts = async (): Promise<Post[]> => {
       ...getAuthHeaders(),
     },
   });
+  if (handle401(response)) return [];
   if (!response.ok) {
     throw new Error("Failed to fetch latest posts");
   }
@@ -52,6 +53,7 @@ export const getPosts = async (
       ...getAuthHeaders(),
     },
   });
+  if (handle401(response)) return [];
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
   }
