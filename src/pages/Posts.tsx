@@ -91,7 +91,7 @@ export default function Posts() {
             <PostCard key={post.postId} post={mapApiPostToCardPost(post)} />
           ))}
       </div>
-      <div className="flex justify-center gap-4 mt-6">
+      <div className="flex justify-center items-center gap-4 mt-6">
         <Button
           variant="outline"
           size="sm"
