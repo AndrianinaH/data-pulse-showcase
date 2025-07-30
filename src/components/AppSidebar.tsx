@@ -6,7 +6,7 @@ import {
   FileText,
   TrendingUp,
 } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import {
   Sidebar,
@@ -36,17 +36,23 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-coral/10 text-coral font-medium border-r-2 border-coral" : "hover:bg-muted/50";
+    isActive
+      ? "bg-coral/10 text-coral font-medium border-r-2 border-coral"
+      : "hover:bg-muted/50";
 
   const isCollapsed = state === "collapsed";
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
-    <Sidebar
-      collapsible="icon"
-    >
+    <Sidebar collapsible="icon">
       <SidebarContent>
         {/* Brand */}
         <div className="p-4 border-b border-border">
@@ -57,7 +63,9 @@ export function AppSidebar() {
             {!isCollapsed && (
               <div>
                 <h2 className="font-bold text-lg text-foreground">Pulse-IA</h2>
-                <p className="text-xs text-muted-foreground">Analytics Dashboard</p>
+                <p className="text-xs text-muted-foreground">
+                  Analytics Dashboard
+                </p>
               </div>
             )}
           </div>
@@ -100,6 +108,35 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {/* Logout button at the bottom */}
+        <div className="mt-auto p-4">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 text-red-600 hover:bg-red-50 rounded px-2 py-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"
+                    />
+                  </svg>
+                  {!isCollapsed && <span>Logout</span>}
+                </button>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </div>
       </SidebarContent>
     </Sidebar>
   );

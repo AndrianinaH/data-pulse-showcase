@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
 import Analytics from "./pages/Analytics";
@@ -11,25 +11,31 @@ import Posts from "./pages/Posts";
 import Audience from "./pages/Audience";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import { Login } from "./pages/Login";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+const App = () => {
+  const location = useLocation();
+  const isLogin = location.pathname === "/login";
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
         <SidebarProvider>
           <div className="min-h-screen flex w-full">
-            <AppSidebar />
+            {!isLogin && <AppSidebar />}
             <div className="flex-1 flex flex-col">
-              <header className="h-12 flex items-center border-b bg-background px-4">
-                <SidebarTrigger />
-              </header>
+              {!isLogin && (
+                <header className="h-12 flex items-center border-b bg-background px-4">
+                  <SidebarTrigger />
+                </header>
+              )}
               <main className="flex-1">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/analytics" element={<Analytics />} />
                   <Route path="/posts" element={<Posts />} />
                   <Route path="/audience" element={<Audience />} />
@@ -41,9 +47,9 @@ const App = () => (
             </div>
           </div>
         </SidebarProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
