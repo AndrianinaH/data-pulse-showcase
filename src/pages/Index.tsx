@@ -1,80 +1,51 @@
 import { useQuery } from "@tanstack/react-query";
 import { StatsOverview } from "@/components/StatsOverview";
 import { PostCard } from "@/components/PostCard";
-import { getStats } from "@/services/statsService";
-
-// Données mockées basées sur le JSON fourni
-const mockData = {
-  posts: [
-    {
-      id: "1",
-      created_at: "2024-01-15T10:30:00Z",
-      post_id: "fb_123456",
-      user_id: "user_789",
-      username: "john_doe",
-      post_created_at: "2024-01-15T09:00:00Z",
-      media_type: "photo" as const,
-      message_text: "Belle journée à Antananarivo ! 🌞",
-      engagement: {
-        comment_count: 25,
-        share_count: 8,
-        reaction_count: 156,
-        video_view_count: 0,
-      },
-      media: {
-        permalink: "https://facebook.com/post/123456",
-        photo_image_uri: "https://picsum.photos/400/300",
-        photo_page_url: "https://facebook.com/photo/123456",
-      },
-    },
-    {
-      id: "2",
-      created_at: "2024-01-14T16:45:00Z",
-      post_id: "fb_789012",
-      user_id: "user_456",
-      username: "marie_rabe",
-      post_created_at: "2024-01-14T15:30:00Z",
-      media_type: "video" as const,
-      message_text: "Découvrez notre nouveau produit ! 🚀",
-      engagement: {
-        comment_count: 42,
-        share_count: 15,
-        reaction_count: 203,
-        video_view_count: 1250,
-      },
-    },
-    {
-      id: "3",
-      created_at: "2024-01-13T14:20:00Z",
-      post_id: "fb_345678",
-      user_id: "user_123",
-      username: "sarah_tech",
-      post_created_at: "2024-01-13T13:45:00Z",
-      media_type: "photo" as const,
-      message_text: "Innovation et technologie au service de Madagascar 💻✨",
-      engagement: {
-        comment_count: 38,
-        share_count: 22,
-        reaction_count: 189,
-        video_view_count: 0,
-      },
-      media: {
-        permalink: "https://facebook.com/post/345678",
-        photo_image_uri: "https://picsum.photos/400/250",
-        photo_page_url: "https://facebook.com/photo/345678",
-      },
-    },
-  ],
-};
+import { getStats, getLatestPosts } from "@/services/statsService";
+import type { Post as CardPost } from "@/components/PostCard";
 
 const Index = () => {
   const {
     data: stats,
-    isLoading,
-    error,
+    isLoading: isStatsLoading,
+    error: statsError,
   } = useQuery({
     queryKey: ["stats"],
     queryFn: getStats,
+  });
+
+  const {
+    data: posts,
+    isLoading: isPostsLoading,
+    error: postsError,
+  } = useQuery({
+    queryKey: ["latest-posts"],
+    queryFn: getLatestPosts,
+  });
+
+  const mapApiPostToCardPost = (apiPost): CardPost => ({
+    id: apiPost.postId,
+    created_at: apiPost.createdAt,
+    post_id: apiPost.postId,
+    user_id: apiPost.userId,
+    username: apiPost.username,
+    post_created_at: apiPost.postCreatedAt,
+    media_type: apiPost.mediaType as "photo" | "video" | "text",
+    message_text: apiPost.messageText || "",
+    engagement: {
+      comment_count: apiPost.commentCount || 0,
+      share_count: apiPost.shareCount || 0,
+      reaction_count: apiPost.reactionCount || 0,
+      video_view_count: apiPost.videoViewCount || 0,
+    },
+    media:
+      apiPost.photoImageUri || apiPost.photoPageUrl || apiPost.permalink
+        ? {
+            photo_image_uri: apiPost.photoImageUri,
+            photo_page_url: apiPost.photoPageUrl,
+            permalink: apiPost.permalink,
+          }
+        : undefined,
   });
 
   return (
@@ -86,12 +57,12 @@ const Index = () => {
         </p>
       </div>
 
-      {error && (
+      {statsError && (
         <p className="text-red-500">
           {"Impossible de charger les statistiques."}
         </p>
       )}
-      <StatsOverview stats={stats} isLoading={isLoading} />
+      <StatsOverview stats={stats} isLoading={isStatsLoading} />
 
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -99,16 +70,23 @@ const Index = () => {
             Publications Récentes
           </h2>
           <div className="text-sm text-muted-foreground">
-            {mockData.posts.length} publication
-            {mockData.posts.length > 1 ? "s" : ""} analysée
-            {mockData.posts.length > 1 ? "s" : ""}
+            {posts ? posts.length : 0} publication
+            {posts && posts.length > 1 ? "s" : ""} analysée
+            {posts && posts.length > 1 ? "s" : ""}
           </div>
         </div>
 
+        {isPostsLoading && <p>Chargement des publications...</p>}
+        {postsError && (
+          <p className="text-red-500">
+            Erreur lors du chargement des publications.
+          </p>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {mockData.posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          {posts &&
+            posts.map((post) => (
+              <PostCard key={post.postId} post={mapApiPostToCardPost(post)} />
+            ))}
         </div>
       </div>
     </div>

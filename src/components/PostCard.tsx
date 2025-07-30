@@ -1,7 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2, Play, ExternalLink, Calendar } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  Play,
+  ExternalLink,
+  Calendar,
+} from "lucide-react";
 
 interface Engagement {
   comment_count: number;
@@ -16,7 +23,7 @@ interface Media {
   photo_page_url?: string;
 }
 
-interface Post {
+export interface Post {
   id: string;
   created_at: string;
   post_id: string;
@@ -41,19 +48,22 @@ export const PostCard = ({ post }: PostCardProps) => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getMediaTypeColor = (type: string) => {
     switch (type) {
-      case 'photo': return 'bg-coral text-white';
-      case 'video': return 'bg-pulse-blue text-white';
-      default: return 'bg-muted text-muted-foreground';
+      case "photo":
+        return "bg-coral text-white";
+      case "video":
+        return "bg-pulse-blue text-white";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -74,10 +84,12 @@ export const PostCard = ({ post }: PostCardProps) => {
               </div>
             </div>
           </div>
-          <Badge className={`${getMediaTypeColor(post.media_type)} font-medium`}>
-            {post.media_type === 'photo' && '📸'}
-            {post.media_type === 'video' && '🎥'}
-            {post.media_type === 'text' && '✍️'}
+          <Badge
+            className={`${getMediaTypeColor(post.media_type)} font-medium`}
+          >
+            {post.media_type === "photo" && "📸"}
+            {post.media_type === "video" && "🎥"}
+            {post.media_type === "text" && "✍️"}
             {post.media_type}
           </Badge>
         </div>
@@ -85,11 +97,11 @@ export const PostCard = ({ post }: PostCardProps) => {
         {/* Content */}
         <div className="space-y-3">
           <p className="text-foreground leading-relaxed">{post.message_text}</p>
-          
+
           {post.media?.photo_image_uri && (
             <div className="relative overflow-hidden rounded-lg">
-              <img 
-                src={post.media.photo_image_uri} 
+              <img
+                src={post.media.photo_image_uri}
                 alt="Post media"
                 className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
               />
@@ -101,26 +113,34 @@ export const PostCard = ({ post }: PostCardProps) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-border">
           <div className="flex items-center space-x-2">
             <Heart className="w-4 h-4 text-coral" />
-            <span className="text-sm font-medium">{formatNumber(post.engagement.reaction_count)}</span>
+            <span className="text-sm font-medium">
+              {formatNumber(post.engagement.reaction_count)}
+            </span>
             <span className="text-xs text-muted-foreground">réactions</span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <MessageCircle className="w-4 h-4 text-pulse-blue" />
-            <span className="text-sm font-medium">{formatNumber(post.engagement.comment_count)}</span>
+            <span className="text-sm font-medium">
+              {formatNumber(post.engagement.comment_count)}
+            </span>
             <span className="text-xs text-muted-foreground">commentaires</span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <Share2 className="w-4 h-4 text-coral" />
-            <span className="text-sm font-medium">{formatNumber(post.engagement.share_count)}</span>
+            <span className="text-sm font-medium">
+              {formatNumber(post.engagement.share_count)}
+            </span>
             <span className="text-xs text-muted-foreground">partages</span>
           </div>
-          
+
           {post.engagement.video_view_count > 0 && (
             <div className="flex items-center space-x-2">
               <Play className="w-4 h-4 text-pulse-blue" />
-              <span className="text-sm font-medium">{formatNumber(post.engagement.video_view_count)}</span>
+              <span className="text-sm font-medium">
+                {formatNumber(post.engagement.video_view_count)}
+              </span>
               <span className="text-xs text-muted-foreground">vues</span>
             </div>
           )}
@@ -129,13 +149,17 @@ export const PostCard = ({ post }: PostCardProps) => {
         {/* Actions */}
         {post.media?.permalink && (
           <div className="flex justify-end">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="hover:bg-coral hover:text-white hover:border-coral transition-colors"
               asChild
             >
-              <a href={post.media.permalink} target="_blank" rel="noopener noreferrer">
+              <a
+                href={post.media.permalink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <ExternalLink className="w-3 h-3 mr-1" />
                 Voir le post
               </a>
