@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { StatsOverview } from "@/components/StatsOverview";
 import { PostCard } from "@/components/PostCard";
+import { getStats, Stats } from "@/services/statsService";
 
 // Données mockées basées sur le JSON fourni
 const mockData = {
@@ -17,13 +19,13 @@ const mockData = {
         comment_count: 25,
         share_count: 8,
         reaction_count: 156,
-        video_view_count: 0
+        video_view_count: 0,
       },
       media: {
         permalink: "https://facebook.com/post/123456",
         photo_image_uri: "https://picsum.photos/400/300",
-        photo_page_url: "https://facebook.com/photo/123456"
-      }
+        photo_page_url: "https://facebook.com/photo/123456",
+      },
     },
     {
       id: "2",
@@ -38,8 +40,8 @@ const mockData = {
         comment_count: 42,
         share_count: 15,
         reaction_count: 203,
-        video_view_count: 1250
-      }
+        video_view_count: 1250,
+      },
     },
     {
       id: "3",
@@ -54,18 +56,39 @@ const mockData = {
         comment_count: 38,
         share_count: 22,
         reaction_count: 189,
-        video_view_count: 0
+        video_view_count: 0,
       },
       media: {
         permalink: "https://facebook.com/post/345678",
         photo_image_uri: "https://picsum.photos/400/250",
-        photo_page_url: "https://facebook.com/photo/345678"
-      }
-    }
-  ]
+        photo_page_url: "https://facebook.com/photo/345678",
+      },
+    },
+  ],
 };
 
 const Index = () => {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedStats = await getStats();
+        setStats(fetchedStats);
+      } catch (err) {
+        setError("Impossible de charger les statistiques.");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <div className="p-6 space-y-6">
       <div>
@@ -74,17 +97,22 @@ const Index = () => {
           Vue d'ensemble de vos performances sur les réseaux sociaux
         </p>
       </div>
-      
-      <StatsOverview posts={mockData.posts} />
-      
+
+      {error && <p className="text-red-500">{error}</p>}
+      <StatsOverview stats={stats} isLoading={isLoading} />
+
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-foreground">Publications Récentes</h2>
+          <h2 className="text-2xl font-bold text-foreground">
+            Publications Récentes
+          </h2>
           <div className="text-sm text-muted-foreground">
-            {mockData.posts.length} publication{mockData.posts.length > 1 ? 's' : ''} analysée{mockData.posts.length > 1 ? 's' : ''}
+            {mockData.posts.length} publication
+            {mockData.posts.length > 1 ? "s" : ""} analysée
+            {mockData.posts.length > 1 ? "s" : ""}
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {mockData.posts.map((post) => (
             <PostCard key={post.id} post={post} />
