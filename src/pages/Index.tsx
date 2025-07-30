@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { StatsOverview } from "@/components/StatsOverview";
 import { PostCard } from "@/components/PostCard";
-import { getStats, Stats } from "@/services/statsService";
+import { getStats } from "@/services/statsService";
 
 // Données mockées basées sur le JSON fourni
 const mockData = {
@@ -68,26 +68,14 @@ const mockData = {
 };
 
 const Index = () => {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setIsLoading(true);
-        const fetchedStats = await getStats();
-        setStats(fetchedStats);
-      } catch (err) {
-        setError("Impossible de charger les statistiques.");
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["stats"],
+    queryFn: getStats,
+  });
 
   return (
     <div className="p-6 space-y-6">
@@ -98,7 +86,11 @@ const Index = () => {
         </p>
       </div>
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error && (
+        <p className="text-red-500">
+          {"Impossible de charger les statistiques."}
+        </p>
+      )}
       <StatsOverview stats={stats} isLoading={isLoading} />
 
       <div className="space-y-6">

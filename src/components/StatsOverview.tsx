@@ -5,7 +5,7 @@ import { Stats } from "@/services/statsService";
 import { TrendingUp, MessageCircle, Share2, Eye } from "lucide-react";
 
 interface StatsOverviewProps {
-  stats: Stats | null;
+  stats: Stats | undefined;
   isLoading: boolean;
 }
 
