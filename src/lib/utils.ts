@@ -42,7 +42,7 @@ export const mapApiPostToCardPost = (apiPost: any) => {
     media = {
       photo_image_uri: apiPost.carousels[0],
       photo_page_url: apiPost.carousels[0],
-      permalink: apiPost.carousels[0],
+      permalink: apiPost.permalink,
     };
   }
   return {
