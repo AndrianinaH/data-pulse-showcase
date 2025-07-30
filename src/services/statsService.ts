@@ -6,6 +6,7 @@ const statsSchema = z.object({
   totalComments: z.string(),
   totalShares: z.string(),
   totalVideoViews: z.string(),
+  totalPosts: z.string(),
 });
 
 export type Stats = z.infer<typeof statsSchema>;

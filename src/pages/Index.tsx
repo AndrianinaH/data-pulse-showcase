@@ -67,12 +67,12 @@ const Index = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-foreground">
-            Publications Récentes
+            10 plus récentes Publications
           </h2>
           <div className="text-sm text-muted-foreground">
-            {posts ? posts.length : 0} publication
-            {posts && posts.length > 1 ? "s" : ""} analysée
-            {posts && posts.length > 1 ? "s" : ""}
+            {stats ? stats.totalPosts : 0} publication
+            {stats && +stats.totalPosts > 1 ? "s" : ""} analysée
+            {posts && +stats.totalPosts > 1 ? "s" : ""}
           </div>
         </div>
 
