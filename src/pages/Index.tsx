@@ -4,6 +4,7 @@ import { PostCard } from "@/components/PostCard";
 import { getStats } from "@/services/statsService";
 import { getLatestPosts } from "@/services/postService";
 import type { Post as CardPost } from "@/components/PostCard";
+import { mapApiPostToCardPost } from "@/lib/utils";
 
 const Index = () => {
   const {
@@ -22,31 +23,6 @@ const Index = () => {
   } = useQuery({
     queryKey: ["latest-posts"],
     queryFn: getLatestPosts,
-  });
-
-  const mapApiPostToCardPost = (apiPost): CardPost => ({
-    id: apiPost.postId,
-    created_at: apiPost.createdAt,
-    post_id: apiPost.postId,
-    user_id: apiPost.userId,
-    username: apiPost.username,
-    post_created_at: apiPost.postCreatedAt,
-    media_type: apiPost.mediaType as "photo" | "video" | "text",
-    message_text: apiPost.messageText || "",
-    engagement: {
-      comment_count: apiPost.commentCount || 0,
-      share_count: apiPost.shareCount || 0,
-      reaction_count: apiPost.reactionCount || 0,
-      video_view_count: apiPost.videoViewCount || 0,
-    },
-    media:
-      apiPost.photoImageUri || apiPost.photoPageUrl || apiPost.permalink
-        ? {
-            photo_image_uri: apiPost.photoImageUri,
-            photo_page_url: apiPost.photoPageUrl,
-            permalink: apiPost.permalink,
-          }
-        : undefined,
   });
 
   return (

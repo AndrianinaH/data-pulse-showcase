@@ -9,6 +9,7 @@ import type { Post as CardPost } from "@/components/PostCard";
 import type { Post } from "@/services/postService";
 import { StatsOverview } from "@/components/StatsOverview";
 import { getSearchStats } from "@/services/statsService";
+import { mapApiPostToCardPost } from "@/lib/utils";
 
 export default function Posts() {
   const [page, setPage] = useState(1);
@@ -27,6 +28,7 @@ export default function Posts() {
     }, 400);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]); // Seulement dépendant de search
 
   // Update search value
@@ -61,31 +63,6 @@ export default function Posts() {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-  });
-
-  const mapApiPostToCardPost = (apiPost): CardPost => ({
-    id: apiPost.postId,
-    created_at: apiPost.createdAt,
-    post_id: apiPost.postId,
-    user_id: apiPost.userId,
-    username: apiPost.username,
-    post_created_at: apiPost.postCreatedAt,
-    media_type: apiPost.mediaType as "photo" | "video" | "text",
-    message_text: apiPost.messageText || "",
-    engagement: {
-      comment_count: apiPost.commentCount || 0,
-      share_count: apiPost.shareCount || 0,
-      reaction_count: apiPost.reactionCount || 0,
-      video_view_count: apiPost.videoViewCount || 0,
-    },
-    media:
-      apiPost.photoImageUri || apiPost.photoPageUrl || apiPost.permalink
-        ? {
-            photo_image_uri: apiPost.photoImageUri,
-            photo_page_url: apiPost.photoPageUrl,
-            permalink: apiPost.permalink,
-          }
-        : undefined,
   });
 
   return (
