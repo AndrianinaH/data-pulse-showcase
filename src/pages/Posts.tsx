@@ -2,7 +2,7 @@ import { PostCard } from "@/components/PostCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/services/postService";
 import type { Post as CardPost } from "@/components/PostCard";
@@ -16,9 +16,13 @@ export default function Posts() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   // Debounce effect
-  const debounceSearch = debounce((val: string) => {
-    setDebouncedSearch(val);
-  }, 400);
+  const debounceSearch = useMemo(
+    () =>
+      debounce((val: string) => {
+        setDebouncedSearch(val);
+      }, 400),
+    [], // Dépendances vides = créé une seule fois
+  );
 
   // Update debounced value on search change
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
