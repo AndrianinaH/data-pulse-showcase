@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { StatsOverview } from "@/components/StatsOverview";
 import { PostCard } from "@/components/PostCard";
-import { getStats, getLatestPosts } from "@/services/statsService";
+import { getStats } from "@/services/statsService";
+import { getLatestPosts } from "@/services/postService";
 import type { Post as CardPost } from "@/components/PostCard";
 
 const Index = () => {
