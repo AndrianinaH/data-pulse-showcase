@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/api";
 
 export type Post = {
   createdAt: string;
@@ -21,7 +22,11 @@ export type Post = {
 };
 
 export const getLatestPosts = async (): Promise<Post[]> => {
-  const response = await fetch(`${API_BASE_URL}/posts/latest`);
+  const response = await fetch(`${API_BASE_URL}/posts/latest`, {
+    headers: {
+      ...getAuthHeaders(),
+    },
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch latest posts");
   }
@@ -42,7 +47,11 @@ export const getPosts = async (
   if (search) {
     params.append("search", search);
   }
-  const response = await fetch(`${API_BASE_URL}/posts?${params}`);
+  const response = await fetch(`${API_BASE_URL}/posts?${params}`, {
+    headers: {
+      ...getAuthHeaders(),
+    },
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch posts");
   }
