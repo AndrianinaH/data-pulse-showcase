@@ -19,3 +19,14 @@ export const getStats = async (): Promise<Stats> => {
   const data = await response.json();
   return statsSchema.parse(data);
 };
+
+export const getSearchStats = async (search: string): Promise<Stats> => {
+  const params = new URLSearchParams();
+  if (search) params.append("search", search);
+  const response = await fetch(`${API_BASE_URL}/stats/search-stats?${params}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch search stats");
+  }
+  const data = await response.json();
+  return statsSchema.parse(data);
+};
