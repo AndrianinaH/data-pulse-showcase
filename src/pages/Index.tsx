@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { StatsOverview } from "@/components/StatsOverview";
 import { PostCard } from "@/components/PostCard";
 
@@ -68,25 +67,28 @@ const mockData = {
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Tableau de bord</h1>
+        <p className="text-muted-foreground mt-2">
+          Vue d'ensemble de vos performances sur les réseaux sociaux
+        </p>
+      </div>
       
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <StatsOverview posts={mockData.posts} />
+      <StatsOverview posts={mockData.posts} />
+      
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-foreground">Publications Récentes</h2>
+          <div className="text-sm text-muted-foreground">
+            {mockData.posts.length} publication{mockData.posts.length > 1 ? 's' : ''} analysée{mockData.posts.length > 1 ? 's' : ''}
+          </div>
+        </div>
         
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-foreground">Publications Récentes</h2>
-            <div className="text-sm text-muted-foreground">
-              {mockData.posts.length} publication{mockData.posts.length > 1 ? 's' : ''} analysée{mockData.posts.length > 1 ? 's' : ''}
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockData.posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {mockData.posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
         </div>
       </div>
     </div>
