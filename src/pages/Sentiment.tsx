@@ -24,7 +24,7 @@ import {
 
 export default function Sentiment() {
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
-  const [selectedSentiment, setSelectedSentiment] = useState<'positive' | 'negative'>('positive');
+  const [selectedSentiment, setSelectedSentiment] = useState<'positive' | 'negative' | 'neutral'>('positive');
 
   const { data: overview, isLoading: loadingOverview } = useQuery({
     queryKey: ['sentiment-overview'],
@@ -250,6 +250,13 @@ export default function Sentiment() {
                 onClick={() => setSelectedSentiment('positive')}
               >
                 Positifs
+              </Button>
+              <Button
+                variant={selectedSentiment === 'neutral' ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedSentiment('neutral')}
+              >
+                Neutres
               </Button>
               <Button
                 variant={selectedSentiment === 'negative' ? "default" : "outline"}
