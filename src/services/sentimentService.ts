@@ -128,6 +128,32 @@ export interface SentimentCorrelation {
   description: string;
 }
 
+// API Response interface for comments
+interface ApiCommentSentimentDistribution {
+  sentiment: string;
+  count: number;
+}
+
+interface ApiTopCommentPost {
+  postId: string;
+  positiveCommentsCount?: number;
+  negativeCommentsCount?: number;
+}
+
+interface ApiCommentOverviewResponse {
+  totalComments: number;
+  commentSentimentDistribution: ApiCommentSentimentDistribution[];
+  topPositiveCommentsPosts: ApiTopCommentPost[];
+  topNegativeCommentsPosts: ApiTopCommentPost[];
+  averageCommentScores: {
+    avgPositive: string;
+    avgNeutral: string;
+    avgNegative: string;
+  };
+  hasData: boolean;
+}
+
+// Processed interface for UI
 export interface CommentSentimentOverview {
   totalComments: number;
   sentimentDistribution: {
@@ -336,37 +362,87 @@ export const getSentimentCorrelations = async (): Promise<
   return transformCorrelationsData(apiData);
 };
 
+// Helper function to transform comment data
+const transformCommentData = (apiData: ApiCommentOverviewResponse): CommentSentimentOverview => {
+  // Calculate percentages from counts
+  const totalCount = apiData.commentSentimentDistribution.reduce(
+    (sum, item) => sum + item.count,
+    0,
+  );
+
+  const getPercentage = (sentiment: string) => {
+    const item = apiData.commentSentimentDistribution.find(
+      (d) => d.sentiment === sentiment,
+    );
+    return item ? (item.count / totalCount) * 100 : 0;
+  };
+
+  // Combine positive and negative comment data by postId
+  const postEngagementMap = new Map<string, {
+    positiveComments: number;
+    negativeComments: number;
+  }>();
+
+  // Add positive comments
+  apiData.topPositiveCommentsPosts.forEach(post => {
+    if (post.postId) { // Skip empty postIds
+      postEngagementMap.set(post.postId, {
+        positiveComments: post.positiveCommentsCount || 0,
+        negativeComments: 0,
+      });
+    }
+  });
+
+  // Add negative comments
+  apiData.topNegativeCommentsPosts.forEach(post => {
+    if (post.postId) { // Skip empty postIds
+      const existing = postEngagementMap.get(post.postId);
+      if (existing) {
+        existing.negativeComments = post.negativeCommentsCount || 0;
+      } else {
+        postEngagementMap.set(post.postId, {
+          positiveComments: 0,
+          negativeComments: post.negativeCommentsCount || 0,
+        });
+      }
+    }
+  });
+
+  // Convert to array and sort by total engagement
+  const topEngagingPosts = Array.from(postEngagementMap.entries())
+    .map(([postId, data]) => ({
+      postId,
+      positiveComments: data.positiveComments,
+      negativeComments: data.negativeComments,
+      totalComments: data.positiveComments + data.negativeComments,
+    }))
+    .sort((a, b) => b.totalComments - a.totalComments)
+    .slice(0, 5); // Top 5 posts
+
+  return {
+    totalComments: apiData.totalComments,
+    sentimentDistribution: {
+      positive: getPercentage('positive'),
+      neutral: getPercentage('neutral'),
+      negative: getPercentage('negative'),
+    },
+    topEngagingPosts,
+  };
+};
+
 export const getCommentSentimentOverview =
   async (): Promise<CommentSentimentOverview> => {
-    // Mock data for debugging - will be replaced later
-    await new Promise((resolve) => setTimeout(resolve, 450));
-
-    return {
-      totalComments: 8456,
-      sentimentDistribution: {
-        positive: 72.4,
-        neutral: 19.8,
-        negative: 7.8,
+    const response = await fetch(`${API_BASE_URL}/sentiment/comments/overview`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(),
       },
-      topEngagingPosts: [
-        {
-          postId: 'post_1',
-          positiveComments: 145,
-          negativeComments: 12,
-          totalComments: 167,
-        },
-        {
-          postId: 'post_2',
-          positiveComments: 98,
-          negativeComments: 8,
-          totalComments: 123,
-        },
-        {
-          postId: 'post_3',
-          positiveComments: 87,
-          negativeComments: 15,
-          totalComments: 115,
-        },
-      ],
-    };
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch comment sentiment overview');
+    }
+
+    const apiData: ApiCommentOverviewResponse = await response.json();
+    return transformCommentData(apiData);
   };
