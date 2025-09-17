@@ -239,26 +239,26 @@ export default function Sentiment() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold">#{index + 1}</span>
                       <span className="text-sm text-muted-foreground">@{post.username}</span>
-                      <SentimentBadge sentiment={post.sentiment} size="sm" />
+                      <SentimentBadge sentiment={post.finalLabel} size="sm" />
                     </div>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
                       {formatDate(post.postCreatedAt)}
                     </div>
                   </div>
-                  <p className="text-sm text-foreground mb-2 line-clamp-2">{post.message}</p>
+                  <p className="text-sm text-foreground mb-2 line-clamp-2">{post.messageText}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Heart className="w-3 h-3" />
-                      {formatNumber(post.engagement?.likes || 0)}
+                      {formatNumber(post.reactionCount || 0)}
                     </span>
                     <span className="flex items-center gap-1">
                       <MessageCircle className="w-3 h-3" />
-                      {formatNumber(post.engagement?.comments || 0)}
+                      {formatNumber(post.commentCount || 0)}
                     </span>
                     <span className="flex items-center gap-1">
                       <Share2 className="w-3 h-3" />
-                      {formatNumber(post.engagement?.shares || 0)}
+                      {formatNumber(post.shareCount || 0)}
                     </span>
                   </div>
                 </div>
@@ -321,15 +321,22 @@ export default function Sentiment() {
           onClose={handleCloseModal}
           post={{
             postId: selectedPost.postId,
-            message: selectedPost.message,
+            message: selectedPost.messageText,
             username: selectedPost.username,
             postCreatedAt: selectedPost.postCreatedAt,
-            engagement: selectedPost.engagement ? {
-              reaction_count: selectedPost.engagement.likes || 0,
-              comment_count: selectedPost.engagement.comments || 0,
-              share_count: selectedPost.engagement.shares || 0,
-              video_view_count: 0,
-            } : undefined,
+            engagement: {
+              reaction_count: selectedPost.reactionCount,
+              comment_count: selectedPost.commentCount,
+              share_count: selectedPost.shareCount,
+              video_view_count: selectedPost.videoViewCount,
+            },
+            // Add sentiment analysis data
+            sentimentAnalysis: {
+              positive: parseFloat(selectedPost.positive),
+              neutral: parseFloat(selectedPost.neutral),
+              negative: parseFloat(selectedPost.negative),
+              finalLabel: selectedPost.finalLabel,
+            },
           }}
         />
       )}

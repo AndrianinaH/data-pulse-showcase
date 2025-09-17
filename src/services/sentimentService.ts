@@ -77,16 +77,17 @@ export interface SentimentTrend {
 
 export interface TopPost {
   postId: string;
-  message: string;
-  username: string;
+  messageText: string;
   postCreatedAt: string;
-  sentiment: 'positive' | 'neutral' | 'negative';
-  score: number;
-  engagement: {
-    likes: number;
-    comments: number;
-    shares: number;
-  };
+  username: string;
+  reactionCount: number;
+  commentCount: number;
+  shareCount: number;
+  videoViewCount: number;
+  positive: string;
+  neutral: string;
+  negative: string;
+  finalLabel: 'positive' | 'neutral' | 'negative';
 }
 
 // API Response interfaces for correlations

@@ -59,3 +59,16 @@ export const getPosts = async (
   }
   return response.json();
 };
+
+export const getPostById = async (postId: string): Promise<Post> => {
+  const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+    headers: {
+      ...getAuthHeaders(),
+    },
+  });
+  if (handle401(response)) throw new Error("Unauthorized");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch post with ID ${postId}`);
+  }
+  return response.json();
+};

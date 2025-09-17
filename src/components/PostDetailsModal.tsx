@@ -40,6 +40,13 @@ interface PostDetailsModalProps {
       permalink?: string;
       photo_image_uri?: string;
     };
+    // Optional sentiment analysis data
+    sentimentAnalysis?: {
+      positive: number;
+      neutral: number;
+      negative: number;
+      finalLabel: 'positive' | 'neutral' | 'negative';
+    };
   };
 }
 
@@ -204,6 +211,70 @@ export const PostDetailsModal = ({ isOpen, onClose, post }: PostDetailsModalProp
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* Post Sentiment Analysis */}
+          {post.sentimentAnalysis && (
+            <div className="bg-muted/10 rounded-lg p-4">
+              <h3 className="font-medium text-foreground mb-3">Analyse du Sentiment du Post</h3>
+
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">
+                    {post.sentimentAnalysis.positive.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">Positif</div>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-lg font-bold text-gray-600">
+                    {post.sentimentAnalysis.neutral.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">Neutre</div>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-lg font-bold text-red-600">
+                    {post.sentimentAnalysis.negative.toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">Négatif</div>
+                </div>
+              </div>
+
+              {/* Sentiment distribution bar */}
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-3">
+                <div className="flex h-full">
+                  <div
+                    className="bg-green-500"
+                    style={{ width: `${post.sentimentAnalysis.positive}%` }}
+                  ></div>
+                  <div
+                    className="bg-gray-400"
+                    style={{ width: `${post.sentimentAnalysis.neutral}%` }}
+                  ></div>
+                  <div
+                    className="bg-red-500"
+                    style={{ width: `${post.sentimentAnalysis.negative}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-sm font-medium">
+                  Sentiment final :
+                  <span className={`ml-1 px-2 py-1 rounded text-xs ${
+                    post.sentimentAnalysis.finalLabel === 'positive'
+                      ? 'bg-green-100 text-green-800'
+                      : post.sentimentAnalysis.finalLabel === 'negative'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {post.sentimentAnalysis.finalLabel === 'positive' ? 'Positif' :
+                     post.sentimentAnalysis.finalLabel === 'negative' ? 'Négatif' : 'Neutre'}
+                  </span>
+                </div>
               </div>
             </div>
           )}
