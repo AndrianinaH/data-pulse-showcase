@@ -54,7 +54,13 @@ interface ApiTrendsResponse {
     endDate: string;
   };
   previousPeriod: {
-    aggregatedData: any[];
+    aggregatedData: Array<{
+      sentiment: string;
+      count: number;
+      avgPositive: string;
+      avgNeutral: string;
+      avgNegative: string;
+    }>;
     startDate: string;
     endDate: string;
   };

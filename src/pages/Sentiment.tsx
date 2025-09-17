@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SentimentBadge } from "@/components/SentimentBadge";
+import { SentimentChart } from "@/components/SentimentChart";
+import { SentimentDistributionChart } from "@/components/SentimentDistributionChart";
 import {
   Brain,
   TrendingUp,
@@ -167,72 +169,15 @@ export default function Sentiment() {
               ))}
             </div>
           </div>
-          <div className="h-64 bg-muted/20 rounded-lg flex items-center justify-center text-muted-foreground">
-            {loadingTrends ? "Chargement..." : "Graphique des tendances à implémenter"}
-            <br />
-            <span className="text-xs">
-              {trends?.length || 0} points de données
-            </span>
-          </div>
+          <SentimentChart data={trends || []} isLoading={loadingTrends} />
         </Card>
 
         <Card className="p-6 bg-white shadow-card">
           <h2 className="text-xl font-semibold mb-4 text-foreground">Répartition globale</h2>
-          {loadingOverview ? (
-            <div className="h-64 bg-muted/20 rounded-lg flex items-center justify-center text-muted-foreground">
-              Chargement...
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    Positif
-                  </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution?.positive?.toFixed(1) || 0}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-green-500 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution?.positive || 0}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-                    Neutre
-                  </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution?.neutral?.toFixed(1) || 0}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-gray-400 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution?.neutral || 0}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    Négatif
-                  </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution?.negative?.toFixed(1) || 0}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-red-500 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution?.negative || 0}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          )}
+          <SentimentDistributionChart
+            data={overview?.sentimentDistribution || { positive: 0, neutral: 0, negative: 0 }}
+            isLoading={loadingOverview}
+          />
         </Card>
       </div>
 
