@@ -7,8 +7,6 @@ import { SentimentBadge } from "@/components/SentimentBadge";
 import {
   Brain,
   TrendingUp,
-  TrendingDown,
-  Users,
   MessageCircle,
   Heart,
   Share2,
@@ -106,10 +104,10 @@ export default function Sentiment() {
             <div>
               <p className="text-sm text-muted-foreground font-medium">Sentiment positif</p>
               <p className="text-3xl font-bold mt-2 text-green-600">
-                {loadingOverview ? "..." : `${overview?.sentimentDistribution.positive.toFixed(1) || 0}%`}
+                {loadingOverview ? "..." : `${overview?.sentimentDistribution?.positive?.toFixed(1) || 0}%`}
               </p>
               <p className="text-sm text-coral mt-1">
-                {loadingOverview ? "..." : `+${overview?.trend.change.toFixed(1) || 0}% ce mois`}
+                {loadingOverview ? "..." : `+${overview?.trend?.change?.toFixed(1) || 0}% ce mois`}
               </p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -141,7 +139,7 @@ export default function Sentiment() {
                 {loadingComments ? "..." : formatNumber(commentsOverview?.totalComments || 0)}
               </p>
               <p className="text-sm text-green-600 mt-1">
-                {loadingComments ? "..." : `${commentsOverview?.sentimentDistribution.positive.toFixed(1) || 0}% positifs`}
+                {loadingComments ? "..." : `${commentsOverview?.sentimentDistribution?.positive?.toFixed(1) || 0}% positifs`}
               </p>
             </div>
             <div className="w-12 h-12 bg-pulse-blue/10 rounded-xl flex items-center justify-center">
@@ -192,12 +190,12 @@ export default function Sentiment() {
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                     Positif
                   </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution.positive.toFixed(1)}%</span>
+                  <span className="font-semibold">{overview?.sentimentDistribution?.positive?.toFixed(1) || 0}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-green-500 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution.positive}%` }}
+                    style={{ width: `${overview?.sentimentDistribution?.positive || 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -208,12 +206,12 @@ export default function Sentiment() {
                     <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
                     Neutre
                   </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution.neutral.toFixed(1)}%</span>
+                  <span className="font-semibold">{overview?.sentimentDistribution?.neutral?.toFixed(1) || 0}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-gray-400 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution.neutral}%` }}
+                    style={{ width: `${overview?.sentimentDistribution?.neutral || 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -224,12 +222,12 @@ export default function Sentiment() {
                     <div className="w-3 h-3 bg-red-500 rounded-full"></div>
                     Négatif
                   </span>
-                  <span className="font-semibold">{overview?.sentimentDistribution.negative.toFixed(1)}%</span>
+                  <span className="font-semibold">{overview?.sentimentDistribution?.negative?.toFixed(1) || 0}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-red-500 h-2 rounded-full"
-                    style={{ width: `${overview?.sentimentDistribution.negative}%` }}
+                    style={{ width: `${overview?.sentimentDistribution?.negative || 0}%` }}
                   ></div>
                 </div>
               </div>
@@ -271,7 +269,7 @@ export default function Sentiment() {
             {loadingTopPosts ? (
               <p className="text-muted-foreground">Chargement...</p>
             ) : (
-              topPosts?.map((post, index) => (
+              Array.isArray(topPosts) && topPosts.map((post, index) => (
                 <div key={post.postId} className="p-3 border border-border rounded-lg hover:bg-muted/20 transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
@@ -288,15 +286,15 @@ export default function Sentiment() {
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Heart className="w-3 h-3" />
-                      {formatNumber(post.engagement.likes)}
+                      {formatNumber(post.engagement?.likes || 0)}
                     </span>
                     <span className="flex items-center gap-1">
                       <MessageCircle className="w-3 h-3" />
-                      {formatNumber(post.engagement.comments)}
+                      {formatNumber(post.engagement?.comments || 0)}
                     </span>
                     <span className="flex items-center gap-1">
                       <Share2 className="w-3 h-3" />
-                      {formatNumber(post.engagement.shares)}
+                      {formatNumber(post.engagement?.shares || 0)}
                     </span>
                   </div>
                 </div>
@@ -311,7 +309,7 @@ export default function Sentiment() {
             {loadingCorrelations ? (
               <p className="text-muted-foreground">Chargement...</p>
             ) : (
-              correlations?.map((corr) => (
+              Array.isArray(correlations) && correlations.map((corr) => (
                 <div key={corr.metric} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{corr.metric}</span>

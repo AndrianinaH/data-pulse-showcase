@@ -121,16 +121,35 @@ export const getSentimentCorrelations = async (): Promise<SentimentCorrelation[]
 };
 
 export const getCommentSentimentOverview = async (): Promise<CommentSentimentOverview> => {
-  const response = await fetch(`${API_BASE_URL}/sentiment/comments/overview`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders(),
+  // Mock data for debugging - will be replaced later
+  await new Promise(resolve => setTimeout(resolve, 450));
+
+  return {
+    totalComments: 8456,
+    sentimentDistribution: {
+      positive: 72.4,
+      neutral: 19.8,
+      negative: 7.8
     },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch comment sentiment overview');
-  }
-
-  return response.json();
+    topEngagingPosts: [
+      {
+        postId: "post_1",
+        positiveComments: 145,
+        negativeComments: 12,
+        totalComments: 167
+      },
+      {
+        postId: "post_2",
+        positiveComments: 98,
+        negativeComments: 8,
+        totalComments: 123
+      },
+      {
+        postId: "post_3",
+        positiveComments: 87,
+        negativeComments: 15,
+        totalComments: 115
+      }
+    ]
+  };
 };
