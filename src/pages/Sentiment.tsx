@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { SentimentBadge } from "@/components/SentimentBadge";
 import { SentimentChart } from "@/components/SentimentChart";
 import { SentimentDistributionChart } from "@/components/SentimentDistributionChart";
+import { CommentAnalysisCard } from "@/components/CommentAnalysisCard";
 import {
   Brain,
   TrendingUp,
@@ -288,6 +289,12 @@ export default function Sentiment() {
           </div>
         </Card>
       </div>
+
+      {/* Comment Analysis Section */}
+      <CommentAnalysisCard
+        data={commentsOverview}
+        isLoading={loadingComments}
+      />
     </div>
   );
 }
