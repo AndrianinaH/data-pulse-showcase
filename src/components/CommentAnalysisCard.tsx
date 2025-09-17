@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, TrendingUp, Hash } from "lucide-react";
+import { MessageCircle, TrendingUp, Hash, Calendar, User } from "lucide-react";
 import { CommentSentimentOverview } from "@/services/sentimentService";
 import { SentimentDistributionChart } from "./SentimentDistributionChart";
 
@@ -14,6 +14,15 @@ export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProp
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   if (isLoading) {
@@ -115,37 +124,58 @@ export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProp
               data.topEngagingPosts.map((post, index) => (
                 <div
                   key={post.postId}
-                  className="p-3 border border-border rounded-lg hover:bg-muted/20 transition-colors"
+                  className="p-4 border border-border rounded-lg hover:bg-muted/20 transition-colors"
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  {/* Header with ranking and user info */}
+                  <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
                         #{index + 1}
                       </Badge>
-                      <span className="text-sm font-mono text-muted-foreground">
-                        {post.postId.slice(0, 12)}...
-                      </span>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <User className="w-3 h-3" />
+                        <span>@{post.username}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Hash className="w-3 h-3" />
-                      {post.totalComments} commentaires
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {formatDate(post.postCreatedAt)}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Hash className="w-3 h-3" />
+                        {post.totalComments} commentaires
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span>{post.positiveComments} positifs</span>
+                  {/* Post content */}
+                  <div className="mb-3">
+                    <p className="text-sm text-foreground line-clamp-2 leading-relaxed">
+                      {post.message}
+                    </p>
+                  </div>
+
+                  {/* Comment sentiment breakdown */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>{post.positiveComments} positifs</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span>{post.negativeComments} négatifs</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                      <span>{post.negativeComments} négatifs</span>
+                    <div className="text-xs text-muted-foreground">
+                      {((post.positiveComments / post.totalComments) * 100).toFixed(1)}% positifs
                     </div>
                   </div>
 
                   {/* Engagement bar */}
-                  <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                    <div className="flex h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="flex h-2 rounded-full overflow-hidden">
                       <div
                         className="bg-green-500"
                         style={{

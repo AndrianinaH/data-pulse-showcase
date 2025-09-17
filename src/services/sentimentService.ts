@@ -79,7 +79,7 @@ export interface TopPost {
   postId: string;
   message: string;
   username: string;
-  createdAt: string;
+  postCreatedAt: string;
   sentiment: 'positive' | 'neutral' | 'negative';
   score: number;
   engagement: {
@@ -163,6 +163,9 @@ export interface CommentSentimentOverview {
   };
   topEngagingPosts: {
     postId: string;
+    message: string;
+    username: string;
+    postCreatedAt: string;
     positiveComments: number;
     negativeComments: number;
     totalComments: number;
@@ -408,14 +411,54 @@ const transformCommentData = (apiData: ApiCommentOverviewResponse): CommentSenti
     }
   });
 
+  // Mock post data for demonstration (in real app, this would come from a posts API)
+  const mockPostData: Record<string, { message: string; username: string; postCreatedAt: string }> = {
+    '1088306573399928': {
+      message: '#MarionOfisialy Palais des Sports #Génération2000 ❣️🥰 #NdaoFaLera',
+      username: 'YasOfficiel',
+      postCreatedAt: '2024-08-24T15:30:00Z'
+    },
+    '1294473435756255': {
+      message: 'LIVE FESTIVAL SOROGNO AMBANJA 2025 Araho mivantana ny fety mandritra ity andro fahaefatra amin\'ity Festival Sorogno 26è édition Ambanja ity ! 🏝🤼',
+      username: 'YasOfficiel',
+      postCreatedAt: '2024-08-29T14:20:00Z'
+    },
+    '1088176770079575': {
+      message: '#TempoGaigy #Génération2000 Palais des Sports Mahamasina💛💙🤩 #NdaoFaLera',
+      username: 'YasOfficiel',
+      postCreatedAt: '2024-08-23T16:45:00Z'
+    },
+    '1109720657925186': {
+      message: 'Isika miaraka amin\'i Barea ! 🇲🇬🐂 \'Ndao fa lera 🇲🇬🐂',
+      username: 'YasOfficiel',
+      postCreatedAt: '2024-08-25T10:15:00Z'
+    },
+    '1077338614496724': {
+      message: 'Micro-trottoir Part. 2 : Bob Tobias Officiel x Myh en MbaLait 🇲🇬🎤💙 MEGA LIVE Yas',
+      username: 'YasOfficiel',
+      postCreatedAt: '2024-08-22T18:30:00Z'
+    }
+  };
+
   // Convert to array and sort by total engagement
   const topEngagingPosts = Array.from(postEngagementMap.entries())
-    .map(([postId, data]) => ({
-      postId,
-      positiveComments: data.positiveComments,
-      negativeComments: data.negativeComments,
-      totalComments: data.positiveComments + data.negativeComments,
-    }))
+    .map(([postId, data]) => {
+      const postInfo = mockPostData[postId] || {
+        message: `Contenu du post ${postId.slice(0, 12)}...`,
+        username: 'utilisateur',
+        postCreatedAt: new Date().toISOString()
+      };
+
+      return {
+        postId,
+        message: postInfo.message,
+        username: postInfo.username,
+        postCreatedAt: postInfo.postCreatedAt,
+        positiveComments: data.positiveComments,
+        negativeComments: data.negativeComments,
+        totalComments: data.positiveComments + data.negativeComments,
+      };
+    })
     .sort((a, b) => b.totalComments - a.totalComments)
     .slice(0, 5); // Top 5 posts
 

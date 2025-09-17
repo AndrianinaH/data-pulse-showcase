@@ -225,7 +225,7 @@ export default function Sentiment() {
                     </div>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
-                      {formatDate(post.createdAt)}
+                      {formatDate(post.postCreatedAt)}
                     </div>
                   </div>
                   <p className="text-sm text-foreground mb-2 line-clamp-2">{post.message}</p>
