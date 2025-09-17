@@ -6,9 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AppSidebar } from "@/components/AppSidebar";
 import Index from "./pages/Index";
-import Analytics from "./pages/Analytics";
 import Posts from "./pages/Posts";
-import Audience from "./pages/Audience";
+import Sentiment from "./pages/Sentiment";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { Login } from "./pages/Login";
@@ -45,14 +44,6 @@ const App = () => {
                   />
                   <Route path="/login" element={<Login />} />
                   <Route
-                    path="/analytics"
-                    element={
-                      <PrivateRoute>
-                        <Analytics />
-                      </PrivateRoute>
-                    }
-                  />
-                  <Route
                     path="/posts"
                     element={
                       <PrivateRoute>
@@ -61,10 +52,10 @@ const App = () => {
                     }
                   />
                   <Route
-                    path="/audience"
+                    path="/sentiment"
                     element={
                       <PrivateRoute>
-                        <Audience />
+                        <Sentiment />
                       </PrivateRoute>
                     }
                   />

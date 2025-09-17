@@ -1,10 +1,9 @@
 import {
-  BarChart3,
   Home,
   Settings,
-  Users,
   FileText,
   TrendingUp,
+  Brain,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -23,9 +22,8 @@ import {
 
 const mainItems = [
   { title: "Tableau de bord", url: "/", icon: Home },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
   { title: "Publications", url: "/posts", icon: FileText },
-  { title: "Audience", url: "/audience", icon: Users },
+  { title: "Analyse de Sentiment", url: "/sentiment", icon: Brain },
 ];
 
 const settingsItems = [
