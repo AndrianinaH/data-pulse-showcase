@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, TrendingUp, Hash, Calendar, User } from "lucide-react";
 import { CommentSentimentOverview } from "@/services/sentimentService";
 import { SentimentDistributionChart } from "./SentimentDistributionChart";
+import { PostDetailsModal } from "./PostDetailsModal";
+import { useState } from "react";
 
 interface CommentAnalysisCardProps {
   data: CommentSentimentOverview | undefined;
@@ -10,6 +12,9 @@ interface CommentAnalysisCardProps {
 }
 
 export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProps) => {
+  const [selectedPost, setSelectedPost] = useState<CommentSentimentOverview['topEngagingPosts'][0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
@@ -23,6 +28,16 @@ export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProp
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handlePostClick = (post: CommentSentimentOverview['topEngagingPosts'][0]) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
   };
 
   if (isLoading) {
@@ -124,7 +139,8 @@ export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProp
               data.topEngagingPosts.map((post, index) => (
                 <div
                   key={post.postId}
-                  className="p-4 border border-border rounded-lg hover:bg-muted/20 transition-colors"
+                  className="p-4 border border-border rounded-lg hover:bg-muted/20 transition-colors cursor-pointer"
+                  onClick={() => handlePostClick(post)}
                 >
                   {/* Header with ranking and user info */}
                   <div className="flex items-start justify-between mb-3">
@@ -196,6 +212,15 @@ export const CommentAnalysisCard = ({ data, isLoading }: CommentAnalysisCardProp
           </div>
         </Card>
       </div>
+
+      {/* Post Details Modal */}
+      {selectedPost && (
+        <PostDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          post={selectedPost}
+        />
+      )}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { SentimentBadge } from "@/components/SentimentBadge";
 import { SentimentChart } from "@/components/SentimentChart";
 import { SentimentDistributionChart } from "@/components/SentimentDistributionChart";
 import { CommentAnalysisCard } from "@/components/CommentAnalysisCard";
+import { PostDetailsModal } from "@/components/PostDetailsModal";
 import {
   Brain,
   TrendingUp,
@@ -20,12 +21,15 @@ import {
   getSentimentTrends,
   getTopPostsBySentiment,
   getSentimentCorrelations,
-  getCommentSentimentOverview
+  getCommentSentimentOverview,
+  type TopPost
 } from "@/services/sentimentService";
 
 export default function Sentiment() {
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
   const [selectedSentiment, setSelectedSentiment] = useState<'positive' | 'negative' | 'neutral'>('positive');
+  const [selectedPost, setSelectedPost] = useState<TopPost | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: overview, isLoading: loadingOverview } = useQuery({
     queryKey: ['sentiment-overview'],
@@ -70,6 +74,16 @@ export default function Sentiment() {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
+  };
+
+  const handlePostClick = (post: TopPost) => {
+    setSelectedPost(post);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedPost(null);
   };
 
   return (
@@ -216,7 +230,11 @@ export default function Sentiment() {
               <p className="text-muted-foreground">Chargement...</p>
             ) : (
               Array.isArray(topPosts) && topPosts.map((post, index) => (
-                <div key={post.postId} className="p-3 border border-border rounded-lg hover:bg-muted/20 transition-colors">
+                <div
+                  key={post.postId}
+                  className="p-3 border border-border rounded-lg hover:bg-muted/20 transition-colors cursor-pointer"
+                  onClick={() => handlePostClick(post)}
+                >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold">#{index + 1}</span>
@@ -295,6 +313,26 @@ export default function Sentiment() {
         data={commentsOverview}
         isLoading={loadingComments}
       />
+
+      {/* Post Details Modal */}
+      {selectedPost && (
+        <PostDetailsModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          post={{
+            postId: selectedPost.postId,
+            message: selectedPost.message,
+            username: selectedPost.username,
+            postCreatedAt: selectedPost.postCreatedAt,
+            engagement: selectedPost.engagement ? {
+              reaction_count: selectedPost.engagement.likes || 0,
+              comment_count: selectedPost.engagement.comments || 0,
+              share_count: selectedPost.engagement.shares || 0,
+              video_view_count: 0,
+            } : undefined,
+          }}
+        />
+      )}
     </div>
   );
 }

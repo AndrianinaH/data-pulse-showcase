@@ -9,6 +9,8 @@ import {
   ExternalLink,
   Calendar,
 } from "lucide-react";
+import { PostDetailsModal } from "./PostDetailsModal";
+import { useState } from "react";
 
 interface Engagement {
   comment_count: number;
@@ -41,6 +43,8 @@ interface PostCardProps {
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const formatNumber = (num: number) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
@@ -67,8 +71,30 @@ export const PostCard = ({ post }: PostCardProps) => {
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't open modal if clicking on a button or link
+    if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('a')) {
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
+  const transformedPost = {
+    postId: post.post_id,
+    message: post.message_text,
+    username: post.username,
+    postCreatedAt: post.post_created_at,
+    engagement: post.engagement,
+    media_type: post.media_type,
+    media: post.media,
+  };
+
   return (
-    <Card className="p-6 bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 border-0">
+    <>
+      <Card
+        className="p-6 bg-gradient-card shadow-card hover:shadow-elegant transition-all duration-300 border-0 cursor-pointer"
+        onClick={handleCardClick}
+      >
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -168,5 +194,12 @@ export const PostCard = ({ post }: PostCardProps) => {
         )}
       </div>
     </Card>
+
+    <PostDetailsModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      post={transformedPost}
+    />
+    </>
   );
 };
